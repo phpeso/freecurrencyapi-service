@@ -1,0 +1,39 @@
+{
+    "name": "peso/freecurrencyapi-service",
+    "license": "MIT",
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Peso\\Services\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Peso\\Services\\Tests\\": "tests"
+        }
+    },
+    "require": {
+        "php": "^8.2",
+        "peso/core": "^1.1",
+        "psr/http-client": "^1",
+        "psr/http-factory": "^1",
+        "psr/simple-cache": "^1 || ^2 || ^3"
+    },
+    "require-dev": {
+        "guzzlehttp/guzzle": "^7.9",
+        "php-http/discovery": "^1.20",
+        "php-http/mock-client": "^1.6",
+        "phpunit/phpunit": "^11.5",
+        "psy/psysh": "*",
+        "sandfox.dev/code-standard": "^1.2025.06.29",
+        "squizlabs/php_codesniffer": "*",
+        "symfony/cache": "^7.3",
+        "vimeo/psalm": "^6.13"
+    }
+}
