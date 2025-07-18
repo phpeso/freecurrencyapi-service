@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Peso\Services\Tests;
 
 use Arokettu\Date\Date;
@@ -77,5 +79,18 @@ final class CurrentRateTest extends TestCase
         self::assertInstanceOf(ErrorResponse::class, $response);
         self::assertInstanceOf(ExchangeRateNotFoundException::class, $response->exception);
         self::assertEquals('Unable to find exchange rate for EUR/RUB', $response->exception->getMessage());
+    }
+
+    public function testInvalidCurrency(): void
+    {
+        $cache = new Psr16Cache(new ArrayAdapter());
+        $http = MockClient::get();
+
+        $service = new FreecurrencyApiService('xxxfreexxx', cache: $cache, httpClient: $http);
+
+        $response = $service->send(new CurrentExchangeRateRequest('XBT', 'USD'));
+        self::assertInstanceOf(ErrorResponse::class, $response);
+        self::assertInstanceOf(ExchangeRateNotFoundException::class, $response->exception);
+        self::assertEquals('Unable to find exchange rate for XBT/USD', $response->exception->getMessage());
     }
 }

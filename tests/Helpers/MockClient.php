@@ -38,6 +38,15 @@ final readonly class MockClient
                     case 'apikey=xxxfreexxx&base_currency=RUB&currencies=EUR%2CUSD':
                         return new Response(body: fopen(__DIR__ . '/../data/latest-RUB-EUR,USD.json', 'r'));
 
+                    case 'apikey=rate_exceeded&base_currency=TRY':
+                        return new Response(429);
+
+                    case 'apikey=invalid&base_currency=TRY':
+                        return new Response(401, body: fopen(__DIR__ . '/../data/invalid-key.json', 'r'));
+
+                    case 'apikey=xxxfreexxx&base_currency=XBT':
+                        return new Response(422, body: fopen(__DIR__ . '/../data/invalid-base.json', 'r'));
+
                     default:
                         throw new \LogicException('Non-mocked query: ' . $query);
                 }
@@ -65,6 +74,9 @@ final readonly class MockClient
 
                     case 'apikey=xxxfreexxx&date=2025-06-13&base_currency=RUB&currencies=EUR%2CUSD':
                         return new Response(body: fopen(__DIR__ . '/../data/2025-06-13-RUB-EUR,USD.json', 'r'));
+
+                    case 'apikey=xxxfreexxx&date=2025-06-13&base_currency=XBT':
+                        return new Response(422, body: fopen(__DIR__ . '/../data/invalid-base.json', 'r'));
 
                     default:
                         throw new \LogicException('Non-mocked query: ' . $query);

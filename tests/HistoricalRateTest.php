@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Peso\Services\Tests;
 
 use Arokettu\Date\Calendar;
-use Arokettu\Date\Date;
 use Peso\Core\Exceptions\ExchangeRateNotFoundException;
-use Peso\Core\Requests\CurrentExchangeRateRequest;
 use Peso\Core\Requests\HistoricalExchangeRateRequest;
 use Peso\Core\Responses\ErrorResponse;
 use Peso\Core\Responses\ExchangeRateResponse;
@@ -82,6 +80,23 @@ final class HistoricalRateTest extends TestCase
         self::assertInstanceOf(ExchangeRateNotFoundException::class, $response->exception);
         self::assertEquals(
             'Unable to find exchange rate for EUR/RUB on 2025-06-13',
+            $response->exception->getMessage(),
+        );
+    }
+
+    public function testInvalidCurrency(): void
+    {
+        $cache = new Psr16Cache(new ArrayAdapter());
+        $http = MockClient::get();
+
+        $service = new FreecurrencyApiService('xxxfreexxx', cache: $cache, httpClient: $http);
+        $date = Calendar::parse('2025-06-13');
+
+        $response = $service->send(new HistoricalExchangeRateRequest('XBT', 'USD', $date));
+        self::assertInstanceOf(ErrorResponse::class, $response);
+        self::assertInstanceOf(ExchangeRateNotFoundException::class, $response->exception);
+        self::assertEquals(
+            'Unable to find exchange rate for XBT/USD on 2025-06-13',
             $response->exception->getMessage(),
         );
     }

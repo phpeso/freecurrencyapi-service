@@ -21,6 +21,7 @@ use Peso\Core\Services\SDK\HTTP\DiscoveredHttpClient;
 use Peso\Core\Services\SDK\HTTP\DiscoveredRequestFactory;
 use Peso\Core\Services\SDK\HTTP\UserAgentHelper;
 use Peso\Core\Types\Decimal;
+use Peso\Services\FreecurrencyApiService\RateExceededException;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\SimpleCache\CacheInterface;
@@ -62,7 +63,11 @@ final readonly class FreecurrencyApiService implements PesoServiceInterface
 
         $url = self::LATEST_ENDPOINT . http_build_query($query, encoding_type: PHP_QUERY_RFC3986);
 
-        $rates = $this->retrieveRates($url);
+        $rates = $this->retrieveRates($url, $request);
+
+        if ($rates instanceof ErrorResponse) {
+            return $rates;
+        }
 
         $rate = $rates[$request->quoteCurrency] ?? null;
 
@@ -83,7 +88,11 @@ final readonly class FreecurrencyApiService implements PesoServiceInterface
 
         $url = self::HISTORICAL_ENDPOINT . http_build_query($query, encoding_type: PHP_QUERY_RFC3986);
 
-        $rates = $this->retrieveRates($url);
+        $rates = $this->retrieveRates($url, $request);
+
+        if ($rates instanceof ErrorResponse) {
+            return $rates;
+        }
 
         $rate = $rates[$request->date->toString()][$request->quoteCurrency] ?? null;
 
@@ -92,8 +101,10 @@ final readonly class FreecurrencyApiService implements PesoServiceInterface
             new ExchangeRateResponse(Decimal::init($rate), $request->date);
     }
 
-    private function retrieveRates(string $url): array|false
-    {
+    private function retrieveRates(
+        string $url,
+        CurrentExchangeRateRequest|HistoricalExchangeRateRequest $pesoRequest,
+    ): array|ErrorResponse {
         $cacheKey = 'peso|fca|' . hash('sha1', $url);
 
         $rates = $this->cache->get($cacheKey);
@@ -110,6 +121,21 @@ final readonly class FreecurrencyApiService implements PesoServiceInterface
         ));
         $response = $this->httpClient->sendRequest($request);
 
+        if ($response->getStatusCode() === 429) {
+            throw new RateExceededException(
+                'Rate exceeded',
+                previous: HttpFailureException::fromResponse($request, $response),
+            );
+        }
+        if ($response->getStatusCode() === 422) {
+            // do not throw
+            return new ErrorResponse(
+                ExchangeRateNotFoundException::fromRequest(
+                    $pesoRequest,
+                    HttpFailureException::fromResponse($request, $response),
+                ),
+            );
+        }
         if ($response->getStatusCode() !== 200) {
             throw HttpFailureException::fromResponse($request, $response);
         }
