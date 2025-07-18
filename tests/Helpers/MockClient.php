@@ -29,6 +29,15 @@ final readonly class MockClient
                     case 'apikey=xxxfreexxx&base_currency=RUB':
                         return new Response(body: fopen(__DIR__ . '/../data/latest-RUB.json', 'r'));
 
+                    case 'apikey=xxxfreexxx&base_currency=EUR&currencies=EUR%2CUSD':
+                        return new Response(body: fopen(__DIR__ . '/../data/latest-EUR-EUR,USD.json', 'r'));
+
+                    case 'apikey=xxxfreexxx&base_currency=USD&currencies=EUR%2CUSD':
+                        return new Response(body: fopen(__DIR__ . '/../data/latest-USD-EUR,USD.json', 'r'));
+
+                    case 'apikey=xxxfreexxx&base_currency=RUB&currencies=EUR%2CUSD':
+                        return new Response(body: fopen(__DIR__ . '/../data/latest-RUB-EUR,USD.json', 'r'));
+
                     default:
                         throw new \LogicException('Non-mocked query: ' . $query);
                 }
@@ -47,6 +56,15 @@ final readonly class MockClient
 
                     case 'apikey=xxxfreexxx&date=2025-06-13&base_currency=RUB':
                         return new Response(body: fopen(__DIR__ . '/../data/2025-06-13-RUB.json', 'r'));
+
+                    case 'apikey=xxxfreexxx&date=2025-06-13&base_currency=EUR&currencies=EUR%2CUSD':
+                        return new Response(body: fopen(__DIR__ . '/../data/2025-06-13-EUR-EUR,USD.json', 'r'));
+
+                    case 'apikey=xxxfreexxx&date=2025-06-13&base_currency=USD&currencies=EUR%2CUSD':
+                        return new Response(body: fopen(__DIR__ . '/../data/2025-06-13-USD-EUR,USD.json', 'r'));
+
+                    case 'apikey=xxxfreexxx&date=2025-06-13&base_currency=RUB&currencies=EUR%2CUSD':
+                        return new Response(body: fopen(__DIR__ . '/../data/2025-06-13-RUB-EUR,USD.json', 'r'));
 
                     default:
                         throw new \LogicException('Non-mocked query: ' . $query);
