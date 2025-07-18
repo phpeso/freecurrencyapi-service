@@ -3,7 +3,7 @@
     "type": "library",
     "license": "MIT",
     "description": "FreecurrencyAPI data provider for Peso",
-    "keywords": ["exchange rates", "peso", "phpeso", "freecurrencyapi"],
+    "keywords": ["currency", "exchange rates", "peso", "phpeso", "free currency api", "freecurrencyapi.com"],
     "homepage": "https://phpeso.readthedocs.io/",
     "authors": [{
         "name": "Anton Smirnov",
