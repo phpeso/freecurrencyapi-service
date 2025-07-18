@@ -39,7 +39,7 @@ final readonly class MockClient
                         return new Response(body: fopen(__DIR__ . '/../data/latest-RUB-EUR,USD.json', 'r'));
 
                     case 'apikey=rate_exceeded&base_currency=TRY':
-                        return new Response(429);
+                        return new Response(429, body: fopen(__DIR__ . '/../data/rate-limit.json', 'r'));
 
                     case 'apikey=invalid&base_currency=TRY':
                         return new Response(401, body: fopen(__DIR__ . '/../data/invalid-key.json', 'r'));
